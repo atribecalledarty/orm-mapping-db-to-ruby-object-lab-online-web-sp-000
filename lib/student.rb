@@ -83,10 +83,23 @@ class Student
       LIMIT 1
     SQL
     
-    DB[:conn].execute(sql).map do |row|
+    DB[:conn].execute(sql).map do |row| #SQL statement will always return an array even if 1 row,so you need to map or collect to make each element in array into an instance, then you can select the first using #first
       self.new_from_db(row)
     end.first
   end
+  
+  def self.all_students_in_grade_X (grade)
+    sql = <<-SQL
+      SELECT *
+      FROM students
+      WHERE grade = ?
+    SQL
+    
+    DB[:conn].execute(sql, grade).map do |row|
+      self.new_from_db(row)
+    end
+  end
+  
   def save
     sql = <<-SQL
       INSERT INTO students (name, grade) 
